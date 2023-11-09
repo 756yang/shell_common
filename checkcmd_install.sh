@@ -12,7 +12,7 @@ function has_command () {
 }
 while [ $# -gt 0 ]; do
 	if ! has_command "$1"; then
-		if {cat /proc/version | grep -E "MINGW|MSYS" &>/dev/null;}; then
+		if { cat /proc/version | grep -E "MINGW|MSYS" &>/dev/null;}; then
 			! ls /bin/pkgfile &>/dev/null && pacman -S pkgfile && pkgfile -u
 			pkgname=$(pkgfile -r "^/(usr/local/bin|usr/bin|bin)/${1%%|*}.exe\$")
 			[ -n "$pkgname" ] && pacman -S ${pkgname##*/}
