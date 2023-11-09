@@ -1,4 +1,5 @@
 #!/bin/bash
+# 检查命令是否存在并尝试安装软件包
 
 function has_command () {
 	local ans
