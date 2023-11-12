@@ -15,7 +15,10 @@ while [ $# -gt 0 ]; do
 		if { cat /proc/version | grep -E "MINGW|MSYS" &>/dev/null;}; then
 			! ls /bin/pkgfile &>/dev/null && pacman -S pkgfile && pkgfile -u
 			pkgname=$(pkgfile -r "^/(usr/local/bin|usr/bin|bin)/${1%%|*}.exe\$")
-			[ -n "$pkgname" ] && pacman -S ${pkgname##*/}
+			[ -n "$pkgname" ] && pacman -S ${pkgname##*/} || {
+				pkgname=$(pkgfile -r "^/(usr/local/bin|usr/bin|bin)/${1%%|*}\$")
+				[ -n "$pkgname" ] && pacman -S ${pkgname##*/}
+			}
 		elif has_command apt-get; then
 			! ls /bin/apt-file &>/dev/null && sudo apt install apt-file && sudo apt-file update
 			pkgname=$(apt-file -x search "^/(usr/local/sbin|usr/local/bin|usr/sbin|usr/bin|sbin|bin)/${1%%|*}\$")
