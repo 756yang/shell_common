@@ -10,6 +10,7 @@ function has_command () {
 	done
 	return 1
 }
+[ $(id -u) -eq 0 ] && sudocmd="" || sudocmd=sudo
 while [ $# -gt 0 ]; do
 	if ! has_command "$1"; then
 		if { cat /proc/version | grep -E "MINGW|MSYS" &>/dev/null;}; then
@@ -20,13 +21,13 @@ while [ $# -gt 0 ]; do
 				[ -n "$pkgname" ] && pacman -S ${pkgname##*/}
 			}
 		elif has_command apt-get; then
-			! ls /bin/apt-file &>/dev/null && sudo apt install apt-file && sudo apt-file update
+			! ls /bin/apt-file &>/dev/null && $sudocmd apt install apt-file && $sudocmd apt-file update
 			pkgname=$(apt-file -x search "^/(usr/local/sbin|usr/local/bin|usr/sbin|usr/bin|sbin|bin)/${1%%|*}\$")
-			[ -n "$pkgname" ] && sudo apt install ${pkgname%%:*}
+			[ -n "$pkgname" ] && $sudocmd apt install ${pkgname%%:*}
 		elif has_command pacman; then
-			! ls /bin/pkgfile &>/dev/null && sudo pacman -S pkgfile && sudo pkgfile -u
+			! ls /bin/pkgfile &>/dev/null && $sudocmd pacman -S pkgfile && $sudocmd pkgfile -u
 			pkgname=$(pkgfile -r "^/(usr/local/sbin|usr/local/bin|usr/sbin|usr/bin|sbin|bin)/${1%%|*}\$")
-			[ -n "$pkgname" ] && sudo pacman -S ${pkgname##*/}
+			[ -n "$pkgname" ] && $sudocmd pacman -S ${pkgname##*/}
 		fi
 		[ $? -ne 0 ] && {
 			echo "$1 can not to execute!"
